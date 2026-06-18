@@ -3,8 +3,7 @@ const events = [
   {
     id:         'bkusa',
     label:      'Assemblée Générale BK USA',
-    poster:     'assets/images/posters/bkusa.png',
-    posterWebp: 'assets/images/posters/bkusa.webp',
+    poster: 'assets/images/posters/bkusa.webp',
     circle:   { cx: 190, cy: 335, r: 159 },
     frameHot: { left: '5.82%', top: '33.02%', width: '59.66%', height: '59.66%' },
     tagline:  "Prenez votre place<br><span>sur l'affiche !</span>",
@@ -17,8 +16,7 @@ const events = [
   {
     id:         'jyseraiBK',
     label:      "J'y Serai BK",
-    poster:     'assets/images/posters/jyseraiBK.png',
-    posterWebp: 'assets/images/posters/jyseraiBK.webp',
+    poster: 'assets/images/posters/jyseraiBK.webp',
     circle:   { cx: 291, cy: 298, r: 153 },
     frameHot: { left: '25.89%', top: '27.2%', width: '57.41%', height: '57.41%' },
     tagline:  "Prenez votre place<br><span>sur l'affiche !</span>",
@@ -59,6 +57,11 @@ let cropState = {
   wrapperH: 0,
 };
 
+function debounce(fn, delay) {
+  let timer;
+  return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); };
+}
+
 // ── Init ──────────────────────────────────────────────────
 window.addEventListener('load', () => {
   document.fonts.load('58px Anton').catch(() => {});
@@ -78,11 +81,11 @@ window.addEventListener('load', () => {
   document.getElementById('backToPickBtn').addEventListener('click', goToPick);
   document.getElementById('changePosterBtn').addEventListener('click', goToPick);
 
-  document.getElementById('nameInput').addEventListener('input', () => {
+  document.getElementById('nameInput').addEventListener('input', debounce(() => {
     if (!document.getElementById('resultSection').hidden && userImg) {
       renderComposite();
     }
-  });
+  }, 200));
   document.getElementById('cameraBtn').addEventListener('click', () => {
     document.getElementById('cameraInput').click();
   });
@@ -114,7 +117,7 @@ function selectEvent(event) {
     posterImgEl.classList.remove('loading');
     posterLoader.classList.add('hidden');
   };
-  posterImg.src = supportsWebP() ? event.posterWebp : event.poster;
+  posterImg.src = event.poster;
 
   document.getElementById('taglineTitle').innerHTML = event.tagline;
   document.getElementById('taglineDesc').innerHTML  = event.desc;
@@ -143,12 +146,6 @@ function goToPick() {
   document.getElementById('cropSection').hidden    = true;
   document.getElementById('uploadSection').hidden  = true;
   document.getElementById('pickSection').hidden    = false;
-}
-
-function supportsWebP() {
-  const canvas = document.createElement('canvas');
-  canvas.width = 1; canvas.height = 1;
-  return canvas.toDataURL('image/webp').indexOf('data:image/webp') === 0;
 }
 
 // ── Upload ────────────────────────────────────────────────
