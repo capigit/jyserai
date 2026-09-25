@@ -36,6 +36,8 @@ const OVERLAY = {
   strokeColor: '#000000',
   strokeWidth: 2,
 };
+const NAME_MAX_FONT_SIZE = 18;
+const NAME_MIN_FONT_SIZE = 11;
 
 let posterImg = null;
 let userImg   = null;
@@ -610,7 +612,7 @@ function drawOverlay(ctx) {
   if (name) {
     // Prénom en blanc au-dessus
     const nameY = cy + r * 0.6;
-    ctx.font        = '18px Anton, Impact, "Arial Black", sans-serif';
+    ctx.font        = fitCanvasText(ctx, name, w * 0.84, NAME_MAX_FONT_SIZE, NAME_MIN_FONT_SIZE);
     ctx.strokeStyle = '#000';
     ctx.lineWidth   = 3;
     ctx.strokeText(name, cx, nameY);
@@ -641,6 +643,15 @@ function drawOverlay(ctx) {
   }
 
   ctx.restore();
+}
+
+function fitCanvasText(ctx, text, maxWidth, maxFontSize, minFontSize) {
+  for (let size = maxFontSize; size >= minFontSize; size--) {
+    const font = `${size}px Anton, Impact, "Arial Black", sans-serif`;
+    ctx.font = font;
+    if (ctx.measureText(text).width <= maxWidth) return font;
+  }
+  return `${minFontSize}px Anton, Impact, "Arial Black", sans-serif`;
 }
 
 // ── Navigation ────────────────────────────────────────────
