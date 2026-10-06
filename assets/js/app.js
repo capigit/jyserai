@@ -1,43 +1,20 @@
-// ── Config affiches ─────────────────────────────────────
-const events = [
-  {
-    id:         'bkusa',
-    label:      'Assemblée Générale BK USA',
-    poster: 'assets/images/posters/bkusa.webp',
-    circle:   { cx: 190, cy: 335, r: 159 },
-    frameHot: { left: '5.82%', top: '33.02%', width: '59.66%', height: '59.66%' },
-    tagline:  "Prenez votre place<br><span>sur l'affiche !</span>",
-    desc:     "Montrez que vous serez présent à <strong class=\"artist\">l'Assemblée Générale Bhantal Kankalabé USA</strong>",
-    shareText: "Je serai à l'Assemblée Générale Bhantal Kankalabé USA à New York !",
-    filename:  'assemblee-generale-bkusa-2026',
-    showText:  true,
-    theme:     '',
-  },
-  {
-    id:         'jyseraiBK',
-    label:      "J'y Serai BK",
-    poster: 'assets/images/posters/jyseraiBK.webp',
-    circle:   { cx: 291, cy: 298, r: 153 },
-    frameHot: { left: '25.89%', top: '27.2%', width: '57.41%', height: '57.41%' },
-    tagline:  "Prenez votre place<br><span>sur l'affiche !</span>",
-    desc:     "Montrez que vous serez présent à <strong class=\"artist\">l'Assemblée Générale Bhantal Kankalabé USA</strong>",
-    shareText: "Je serai à l'Assemblée Générale Bhantal Kankalabé USA à New York !",
-    filename:  'jyserai-bkusa-2026',
-    showText:  false,
-    theme:     'theme-2',
-  },
-];
-let currentEvent = null;
-
-const OVERLAY = {
-  text: "J'y Serai",
-  font: '31px Anton, Impact, "Arial Black", sans-serif',
-  color: '#E0B868',
-  strokeColor: '#000000',
-  strokeWidth: 2,
+// ── Config affiche ───────────────────────────────────────
+const currentEvent = {
+  id:         'hirde',
+  label:      'HIRDE Kankalabé',
+  poster: 'assets/images/posters/hirde.png',
+  photoArea: { x: 748, y: 208, w: 330, h: 504, radius: 48 },
+  frameHot: { left: '64.88%', top: '14.41%', width: '31.02%', height: '39.09%', radius: '13%' },
+  cropRatio: 330 / 504,
+  tagline:  "Prenez votre place<br><span>sur l'affiche !</span>",
+  desc:     "Montrez que vous serez présent au <strong class=\"artist\">HIRDE Kankalabé</strong>",
+  shareText: "Je serai au HIRDE Kankalabé le 28 novembre 2026 !",
+  filename:  'jyserai-hirde-kankalabe-2026',
 };
-const NAME_MAX_FONT_SIZE = 18;
-const NAME_MIN_FONT_SIZE = 11;
+
+const OUTPUT_MIME = 'image/png';
+const OUTPUT_EXT = 'png';
+const INTERMEDIATE_JPEG_QUALITY = 0.98;
 
 let posterImg = null;
 let userImg   = null;
@@ -59,35 +36,17 @@ let cropState = {
   wrapperH: 0,
 };
 
-function debounce(fn, delay) {
-  let timer;
-  return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); };
-}
-
 // ── Init ──────────────────────────────────────────────────
 window.addEventListener('load', () => {
-  document.fonts.load('58px Anton').catch(() => {});
-
-  setupPick();
   setupUpload();
   setupCropActions();
-
-  document.getElementById('nameInput').addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') e.target.blur();
-  });
+  loadPoster();
 
   document.getElementById('changeBtn').addEventListener('click', resetToUpload);
   document.getElementById('downloadBtn').addEventListener('click', downloadResult);
   document.getElementById('whatsappBtn').addEventListener('click', whatsappShare);
   document.getElementById('facebookBtn').addEventListener('click', facebookShare);
-  document.getElementById('backToPickBtn').addEventListener('click', goToPick);
-  document.getElementById('changePosterBtn').addEventListener('click', goToPick);
 
-  document.getElementById('nameInput').addEventListener('input', debounce(() => {
-    if (!document.getElementById('resultSection').hidden && userImg) {
-      renderComposite();
-    }
-  }, 200));
   document.getElementById('cameraBtn').addEventListener('click', () => {
     document.getElementById('cameraInput').click();
   });
@@ -97,57 +56,39 @@ window.addEventListener('load', () => {
   });
 });
 
-// ── Sélection d'affiche ───────────────────────────────────
-function setupPick() {
-  document.querySelectorAll('.pick-card').forEach((card) => {
-    card.addEventListener('click', () => selectEvent(events[parseInt(card.dataset.idx)]));
-  });
-}
-
-function selectEvent(event) {
-  currentEvent = event;
-
+// ── Affiche ───────────────────────────────────────────────
+function loadPoster() {
   const posterImgEl  = document.getElementById('posterImgEl');
   const posterLoader = document.getElementById('posterLoader');
 
   posterImgEl.classList.add('loading');
   posterLoader.classList.remove('hidden');
-  posterImgEl.src = event.poster;
+  posterImgEl.src = currentEvent.poster;
 
-  posterImg = new Image();
-  posterImg.onload = () => {
+  const markPosterReady = () => {
     posterImgEl.classList.remove('loading');
     posterLoader.classList.add('hidden');
   };
-  posterImg.src = event.poster;
 
-  document.getElementById('taglineTitle').innerHTML = event.tagline;
-  document.getElementById('taglineDesc').innerHTML  = event.desc;
+  if (posterImgEl.complete && posterImgEl.naturalWidth > 0) {
+    markPosterReady();
+  }
+
+  posterImg = new Image();
+  posterImg.onload = markPosterReady;
+  posterImg.src = currentEvent.poster;
+
+  document.getElementById('taglineTitle').innerHTML = currentEvent.tagline;
+  document.getElementById('taglineDesc').innerHTML  = currentEvent.desc;
 
   const fh = document.getElementById('frameHot');
-  fh.style.left   = event.frameHot.left;
-  fh.style.top    = event.frameHot.top;
-  fh.style.width  = event.frameHot.width;
-  fh.style.height = event.frameHot.height;
+  fh.style.left   = currentEvent.frameHot.left;
+  fh.style.top    = currentEvent.frameHot.top;
+  fh.style.width  = currentEvent.frameHot.width;
+  fh.style.height = currentEvent.frameHot.height;
+  fh.style.borderRadius = currentEvent.frameHot.radius;
 
-  document.querySelector('.name-field').hidden = !event.showText;
-  document.getElementById('uploadSection').classList.toggle('no-text', !event.showText);
-  document.documentElement.classList.toggle('theme-2', event.theme === 'theme-2');
-
-  document.getElementById('pickSection').hidden   = true;
   document.getElementById('uploadSection').hidden = false;
-}
-
-function goToPick() {
-  userImg      = null;
-  hasCounted   = false;
-  posterImg    = null;
-  currentEvent = null;
-  document.getElementById('resultSection').hidden  = true;
-  document.getElementById('resultActions').hidden  = true;
-  document.getElementById('cropSection').hidden    = true;
-  document.getElementById('uploadSection').hidden  = true;
-  document.getElementById('pickSection').hidden    = false;
 }
 
 // ── Upload ────────────────────────────────────────────────
@@ -266,7 +207,7 @@ function applyOrientation(img, orientation) {
   ctx.drawImage(img, 0, 0);
 
   const out = new Image();
-  out.src = canvas.toDataURL('image/jpeg', 0.92);
+  out.src = canvas.toDataURL('image/jpeg', INTERMEDIATE_JPEG_QUALITY);
   return out;
 }
 
@@ -275,7 +216,7 @@ function setUploadLoading(isLoading) {
 }
 
 function resizeAndShowCrop(img) {
-  const MAX = 2000;
+  const MAX = 3000;
   const w = img.naturalWidth;
   const h = img.naturalHeight;
 
@@ -288,11 +229,14 @@ function resizeAndShowCrop(img) {
   const canvas = document.createElement('canvas');
   canvas.width  = Math.round(w * scale);
   canvas.height = Math.round(h * scale);
-  canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+  const ctx = canvas.getContext('2d');
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
   const resized = new Image();
   resized.onload = () => showCropUI(resized.src, resized);
-  resized.src = canvas.toDataURL('image/jpeg', 0.92);
+  resized.src = canvas.toDataURL('image/jpeg', INTERMEDIATE_JPEG_QUALITY);
 }
 
 // ── Crop UI ───────────────────────────────────────────────
@@ -305,10 +249,12 @@ function showCropUI(dataURL, img) {
   document.getElementById('cropSection').hidden   = false;
 
   // Init state
+  wrapper.style.aspectRatio = String(currentEvent.cropRatio || 1);
+  wrapper.style.borderRadius = currentEvent.photoArea ? '12%' : '50%';
   const wW = wrapper.clientWidth;
   const wH = wrapper.clientHeight;
   const imgRatio  = img.naturalWidth / img.naturalHeight;
-  const cropRatio = 1;
+  const cropRatio = currentEvent.cropRatio || 1;
 
   // Initial scale: cover the wrapper (same logic as drawCover)
   let initScale;
@@ -520,7 +466,7 @@ function rotateCropImage(deg) {
     userImg = rotated;
     showCropUI(rotated.src, rotated);
   };
-  rotated.src = canvas.toDataURL('image/jpeg', 0.92);
+  rotated.src = canvas.toDataURL('image/jpeg', INTERMEDIATE_JPEG_QUALITY);
 }
 
 // Returns the source rect in the original image coords based on crop state
@@ -543,20 +489,18 @@ function renderComposite() {
     canvas.width  = posterImg.naturalWidth;
     canvas.height = posterImg.naturalHeight;
 
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(posterImg, 0, 0);
 
-    const { cx, cy, r } = currentEvent.circle;
-    const x = cx - r;
-    const y = cy - r;
-    const size = r * 2;
+    const area = currentEvent.photoArea;
 
     ctx.save();
-    circlePath(ctx, cx, cy, r);
+    clipPosterPhotoArea(ctx, area);
     ctx.clip();
-    drawCoverCropped(ctx, userImg, x, y, size, size);
+    drawCoverCropped(ctx, userImg, area.x, area.y, area.w, area.h);
     ctx.restore();
 
-    drawOverlay(ctx);
     hideLoading();
   };
 
@@ -564,9 +508,22 @@ function renderComposite() {
   else posterImg.onload = draw;
 }
 
-function circlePath(ctx, cx, cy, r) {
+function clipPosterPhotoArea(ctx, area) {
+  roundedRectPath(ctx, area.x, area.y, area.w, area.h, area.radius || 0);
+}
+
+function roundedRectPath(ctx, x, y, w, h, r) {
+  const radius = Math.min(r, w / 2, h / 2);
   ctx.beginPath();
-  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + w - radius, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+  ctx.lineTo(x + w, y + h - radius);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+  ctx.lineTo(x + radius, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
   ctx.closePath();
 }
 
@@ -584,74 +541,6 @@ function drawCoverCropped(ctx, img, dx, dy, dw, dh) {
     // Fall back to cover if ratios diverge (shouldn't happen with correct wrapper aspect-ratio)
     ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
   }
-}
-
-function drawOverlay(ctx) {
-  if (!currentEvent.showText) return;
-  const { cx, cy, r } = currentEvent.circle;
-  const x = cx - r;
-  const w = r * 2;
-  const name    = document.getElementById('nameInput').value.trim().toUpperCase();
-
-  ctx.save();
-  circlePath(ctx, cx, cy, r);
-  ctx.clip();
-
-  const gradientTop = cy + r * 0.36;
-  const grad = ctx.createLinearGradient(cx, gradientTop, cx, cy + r);
-  grad.addColorStop(0,   'rgba(0,0,0,0)');
-  grad.addColorStop(0.55, 'rgba(0,0,0,0.5)');
-  grad.addColorStop(1,   'rgba(0,0,0,0.74)');
-  ctx.fillStyle = grad;
-  ctx.fillRect(x, gradientTop, w, cy + r - gradientTop);
-
-  ctx.textAlign    = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.lineJoin     = 'round';
-
-  if (name) {
-    // Prénom en blanc au-dessus
-    const nameY = cy + r * 0.6;
-    ctx.font        = fitCanvasText(ctx, name, w * 0.84, NAME_MAX_FONT_SIZE, NAME_MIN_FONT_SIZE);
-    ctx.strokeStyle = '#000';
-    ctx.lineWidth   = 3;
-    ctx.strokeText(name, cx, nameY);
-    ctx.fillStyle = '#ffffff';
-    ctx.fillText(name, cx, nameY);
-
-    // "J'y Serai" en doré en dessous
-    const jyY = cy + r * 0.8;
-    ctx.font          = OVERLAY.font;
-    ctx.letterSpacing = '1px';
-    ctx.strokeStyle   = OVERLAY.strokeColor;
-    ctx.lineWidth     = OVERLAY.strokeWidth * 2;
-    ctx.strokeText(OVERLAY.text, cx, jyY);
-    ctx.fillStyle = OVERLAY.color;
-    ctx.fillText(OVERLAY.text, cx, jyY);
-    ctx.letterSpacing = '0px';
-  } else {
-    // Juste "J'y Serai" centré
-    const textY = cy + r * 0.76;
-    ctx.font          = OVERLAY.font;
-    ctx.letterSpacing = '1px';
-    ctx.strokeStyle   = OVERLAY.strokeColor;
-    ctx.lineWidth     = OVERLAY.strokeWidth * 2;
-    ctx.strokeText(OVERLAY.text, cx, textY);
-    ctx.fillStyle = OVERLAY.color;
-    ctx.fillText(OVERLAY.text, cx, textY);
-    ctx.letterSpacing = '0px';
-  }
-
-  ctx.restore();
-}
-
-function fitCanvasText(ctx, text, maxWidth, maxFontSize, minFontSize) {
-  for (let size = maxFontSize; size >= minFontSize; size--) {
-    const font = `${size}px Anton, Impact, "Arial Black", sans-serif`;
-    ctx.font = font;
-    if (ctx.measureText(text).width <= maxWidth) return font;
-  }
-  return `${minFontSize}px Anton, Impact, "Arial Black", sans-serif`;
 }
 
 // ── Navigation ────────────────────────────────────────────
@@ -686,14 +575,14 @@ async function whatsappShare() {
     /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
   canvas.toBlob(async (blob) => {
-    const file = new File([blob], `${currentEvent.filename}.jpg`, { type: 'image/jpeg' });
+    const file = new File([blob], `${currentEvent.filename}.${OUTPUT_EXT}`, { type: OUTPUT_MIME });
 
     if (isMobile && navigator.canShare && navigator.canShare({ files: [file] })) {
       // Mobile : partage natif (WhatsApp en tête de liste)
       try {
         await navigator.share({
           files: [file],
-          title: "J'y Serai - BK USA 2026",
+          title: "J'y Serai - HIRDE Kankalabé 2026",
           text: currentEvent.shareText,
         });
         showToast('Partagé avec succès !');
@@ -707,7 +596,7 @@ async function whatsappShare() {
       const text = encodeURIComponent(currentEvent.shareText);
       window.open(`https://wa.me/?text=${text}`, '_blank');
     }
-  }, 'image/jpeg', 0.92);
+  }, OUTPUT_MIME);
 }
 
 // ── Facebook ──────────────────────────────────────────────
@@ -717,13 +606,13 @@ async function facebookShare() {
     /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
   canvas.toBlob(async (blob) => {
-    const file = new File([blob], `${currentEvent.filename}.jpg`, { type: 'image/jpeg' });
+    const file = new File([blob], `${currentEvent.filename}.${OUTPUT_EXT}`, { type: OUTPUT_MIME });
 
     if (isMobile && navigator.canShare && navigator.canShare({ files: [file] })) {
       try {
         await navigator.share({
           files: [file],
-          title: "J'y Serai - BK USA 2026",
+          title: "J'y Serai - HIRDE Kankalabé 2026",
           text: currentEvent.shareText,
         });
         showToast('Partagé avec succès !');
@@ -738,20 +627,20 @@ async function facebookShare() {
       downloadFallback(blob);
       window.open('https://www.facebook.com', '_blank');
     }
-  }, 'image/jpeg', 0.92);
+  }, OUTPUT_MIME);
 }
 
 // ── Téléchargement ────────────────────────────────────────
 function downloadResult() {
   const canvas = document.getElementById('canvas');
-  canvas.toBlob((blob) => downloadFallback(blob), 'image/jpeg', 0.92);
+  canvas.toBlob((blob) => downloadFallback(blob), OUTPUT_MIME);
 }
 
 function downloadFallback(blob) {
   const url = URL.createObjectURL(blob);
   const a   = document.createElement('a');
   a.href     = url;
-  a.download = `${currentEvent.filename}.jpg`;
+  a.download = `${currentEvent.filename}.${OUTPUT_EXT}`;
   a.click();
   URL.revokeObjectURL(url);
   showToast('Téléchargement réussi !');

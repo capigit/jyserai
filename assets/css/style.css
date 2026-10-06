@@ -22,18 +22,6 @@
   --theme-transition: 0.45s ease;
 }
 
-/* ── Thème 2 — J'y Serai BK (palette bleu marine / argent) ── */
-.theme-2 {
-  --green: #1a2f4a;
-  --green-deep: #0d1e35;
-  --bg: #e8eaed;
-  --surface: #f2f4f7;
-  --surface2: #d4d8de;
-  --border: #adb5c0;
-  --text: #0d1e35;
-  --text-muted: #4f6070;
-}
-
 html, body { min-height: 100%; }
 
 body {
@@ -119,86 +107,7 @@ main {
   justify-content: center;
 }
 
-/* ── Pick section ── */
-.pick-section {
-  width: 100%;
-  max-width: 420px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 24px;
-  animation: fade-up 0.5s ease both;
-}
-
-.pick-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  width: 100%;
-}
-
-.pick-card {
-  background: none;
-  border: 2px solid var(--border);
-  border-radius: var(--radius);
-  padding: 6px;
-  cursor: pointer;
-  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s, border-color var(--theme-transition);
-  overflow: hidden;
-}
-
-.pick-card img {
-  width: 100%;
-  display: block;
-  border-radius: 8px;
-  pointer-events: none;
-  user-select: none;
-}
-
-.pick-card:hover {
-  border-color: var(--gold);
-  transform: translateY(-4px);
-  box-shadow: 0 12px 32px rgba(200, 146, 58, 0.3);
-}
-
-.pick-card:active { transform: scale(0.97); }
-
-.pick-label {
-  display: block;
-  text-align: center;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-muted);
-  padding: 6px 0 2px;
-  letter-spacing: 0.2px;
-}
-
-.pick-card:hover .pick-label { color: var(--gold); }
-
-/* ── Bouton retour affiche ── */
-.btn-back {
-  background: none;
-  border: none;
-  color: var(--text-muted);
-  font-size: 13px;
-  font-family: inherit;
-  cursor: pointer;
-  padding: 4px 8px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  opacity: 0.65;
-  transition: opacity 0.15s, color 0.15s;
-}
-
-.btn-back:hover {
-  opacity: 1;
-  color: var(--gold);
-}
-
 /* ── Upload section ── */
-.upload-section.no-text { gap: 14px; }
-
 .upload-section {
   width: 100%;
   max-width: 380px;
@@ -505,10 +414,6 @@ canvas {
   width: 100%;
 }
 
-.actions-row--center {
-  justify-content: center;
-}
-
 .btn {
   display: inline-flex;
   align-items: center;
@@ -597,29 +502,6 @@ footer p {
   font-size: 11px;
   color: #d7c8b5;
 }
-
-/* ── Champ prénom ── */
-.name-field {
-  width: 100%;
-  max-width: 320px;
-}
-
-#nameInput {
-  width: 100%;
-  background: var(--surface2);
-  border: 1.5px solid var(--border);
-  border-radius: 50px;
-  padding: 12px 20px;
-  font-size: 14px;
-  color: var(--text);
-  text-align: center;
-  outline: none;
-  transition: border-color 0.2s, background-color var(--theme-transition), color var(--theme-transition);
-  font-family: inherit;
-}
-
-#nameInput::placeholder { color: var(--text-muted); opacity: 0.65; }
-#nameInput:focus { border-color: var(--gold); }
 
 /* ── Mention confidentialité ── */
 .privacy-note {

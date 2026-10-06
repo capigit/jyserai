@@ -1,7 +1,7 @@
 {
-  "name": "J'y Serai - Assemblée Générale BK USA 2026",
+  "name": "J'y Serai - HIRDE Kankalabé 2026",
   "short_name": "J'y Serai",
-  "description": "Génère ta photo sur l'affiche de l'Assemblée Générale Bhantal Kankalabé USA",
+  "description": "Génère ta photo sur l'affiche du HIRDE Kankalabé",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#f8f4f1",

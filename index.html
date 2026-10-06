@@ -3,31 +3,27 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>J'y Serai - Assemblée Générale BK USA 2026</title>
+  <title>J'y Serai - HIRDE Kankalabé 2026</title>
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="assets/images/logo.png" />
-  <link rel="apple-touch-icon" href="assets/images/logo.png" />
+  <link rel="icon" type="image/png" href="assets/images/posters/Logo.png" />
+  <link rel="apple-touch-icon" href="assets/images/posters/Logo.png" />
 
   <!-- Open Graph / partage WhatsApp & réseaux sociaux -->
   <!-- TODO déploiement : remplacer SITE_URL par l'URL GitHub Pages finale -->
   <meta property="og:type"        content="website" />
   <meta property="og:url"         content="SITE_URL" />
-  <meta property="og:title"       content="J'y Serai - Assemblée Générale BK USA 2026" />
-  <meta property="og:description" content="Mettez votre photo sur l'affiche de l'Assemblée Générale Bhantal Kankalabé USA !" />
-  <meta property="og:image"       content="SITE_URLassets/images/posters/bkusa.png" />
+  <meta property="og:title"       content="J'y Serai - HIRDE Kankalabé 2026" />
+  <meta property="og:description" content="Mettez votre photo sur l'affiche du HIRDE Kankalabé !" />
+  <meta property="og:image"       content="SITE_URLassets/images/posters/hirde.png" />
   <meta name="twitter:card"       content="summary_large_image" />
-  <meta name="twitter:title"      content="J'y Serai - Assemblée Générale BK USA 2026" />
-  <meta name="twitter:description" content="Mettez votre photo sur l'affiche de l'Assemblée Générale Bhantal Kankalabé USA !" />
-  <meta name="twitter:image"      content="SITE_URLassets/images/posters/bkusa.png" />
+  <meta name="twitter:title"      content="J'y Serai - HIRDE Kankalabé 2026" />
+  <meta name="twitter:description" content="Mettez votre photo sur l'affiche du HIRDE Kankalabé !" />
+  <meta name="twitter:image"      content="SITE_URLassets/images/posters/hirde.png" />
 
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#073226" />
-  <!-- Anton font — rendu cohérent de "J'y Serai" sur tous les appareils -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet" />
-  <meta name="description" content="Mettez votre photo sur l'affiche de l'Assemblée Générale Bhantal Kankalabé USA 2026 à New York et partagez-la !" />
+  <meta name="description" content="Mettez votre photo sur l'affiche du HIRDE Kankalabé 2026 et partagez-la !" />
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
@@ -35,40 +31,22 @@
 
     <header>
       <div class="header-inner">
-        <img src="assets/images/logo.png" alt="Logo BK USA" class="header-logo" />
+        <img src="assets/images/posters/Logo.png" alt="Logo AJDK" class="header-logo" />
         <div class="header-text">
           <h1>J'y Serai !</h1>
-          <p>Assemblée Générale · New York 2026</p>
+          <p>HIRDE Kankalabé · 28 novembre 2026</p>
         </div>
       </div>
     </header>
 
     <main>
 
-      <!-- Section choix d'affiche -->
-      <section class="pick-section" id="pickSection">
-        <div class="tagline">
-          <h2>Choisissez<br><span>votre affiche</span></h2>
-          <p>Sélectionnez l'affiche sur laquelle vous souhaitez apparaître</p>
-        </div>
-        <div class="pick-grid">
-          <button class="pick-card" data-idx="0">
-            <img src="assets/images/posters/bkusa.webp" alt="Affiche officielle" draggable="false" loading="lazy" />
-            <span class="pick-label">Avec texte</span>
-          </button>
-          <button class="pick-card" data-idx="1">
-            <img src="assets/images/posters/jyseraiBK.webp" alt="Affiche J'y Serai" draggable="false" loading="lazy" />
-            <span class="pick-label">Sans texte</span>
-          </button>
-        </div>
-      </section>
-
       <!-- Section upload -->
       <section class="upload-section" id="uploadSection" hidden>
 
         <div class="tagline">
           <h2 id="taglineTitle">Prenez votre place<br><span>sur l'affiche !</span></h2>
-          <p id="taglineDesc">Montrez que vous serez présent à <strong class="artist">l'Assemblée Générale Bhantal Kankalabé USA</strong></p>
+          <p id="taglineDesc">Montrez que vous serez présent au <strong class="artist">HIRDE Kankalabé</strong></p>
         </div>
 
         <div class="poster-teaser" id="uploadZone">
@@ -76,7 +54,7 @@
             <div class="spinner"></div>
             <span>Chargement de l'affiche…</span>
           </div>
-          <img src="assets/images/posters/bkusa.webp" alt="Affiche Assemblée Générale BK USA" draggable="false" id="posterImgEl" />
+          <img src="assets/images/posters/hirde.png" alt="Affiche HIRDE Kankalabé" draggable="false" id="posterImgEl" />
           <div class="frame-hot" id="frameHot">
             <div class="frame-inner">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
@@ -113,16 +91,7 @@
           Prendre une selfie
         </button>
 
-        <div class="name-field">
-          <input type="text" id="nameInput"
-            placeholder="Votre prénom (optionnel)"
-            maxlength="35"
-            autocomplete="given-name"
-            enterkeyhint="done" />
-        </div>
-
         <p class="hint-drag">ou glissez votre photo directement sur l'affiche</p>
-        <button class="btn-back" id="backToPickBtn">← Changer d'affiche</button>
         <p class="privacy-note">🔒 Votre photo est traitée localement, jamais envoyée sur un serveur</p>
 
       </section>
@@ -205,11 +174,6 @@
             </button>
           </div>
 
-          <!-- Changer d'affiche -->
-          <div class="actions-row actions-row--center">
-            <button class="btn-back" id="changePosterBtn">← Changer d'affiche</button>
-          </div>
-
         </div>
       </section>
 
@@ -219,8 +183,8 @@
     <div class="toast" id="toast"></div>
 
     <footer>
-      <img src="assets/images/logo.png" alt="BK USA" class="footer-logo" />
-      <p>Bhantal Kankalabé USA · Assemblée Générale 2026</p>
+      <img src="assets/images/posters/Logo.png" alt="AJDK" class="footer-logo" />
+      <p>AJDK · HIRDE Kankalabé 2026</p>
     </footer>
 
   </div>
