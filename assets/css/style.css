@@ -115,6 +115,7 @@ main {
 
 /* ── Upload section ── */
 .upload-section {
+  position: relative;
   width: 100%;
   max-width: 380px;
   display: flex;
@@ -122,6 +123,30 @@ main {
   align-items: center;
   gap: 22px;
   animation: fade-up 0.5s ease both;
+}
+
+.processing-overlay {
+  position: absolute;
+  inset: -10px;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 100%;
+  border-radius: 18px;
+  background: rgba(248, 244, 241, 0.84);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 35, 33, 0.16);
+  backdrop-filter: blur(8px);
+}
+
+.processing-overlay.hidden {
+  display: none;
 }
 
 @keyframes fade-up {
@@ -441,6 +466,11 @@ canvas {
 }
 
 .btn:active { transform: scale(0.97); }
+
+.btn[disabled] {
+  cursor: wait;
+  opacity: 0.65;
+}
 
 /* WhatsApp & Facebook — côte à côte */
 .btn-whatsapp,
@@ -766,5 +796,16 @@ footer p {
   .btn-whatsapp:hover,
   .btn-facebook:hover {
     transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
   }
 }

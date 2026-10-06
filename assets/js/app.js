@@ -125,7 +125,10 @@ function setupUpload() {
 }
 
 function handleFile(file) {
-  if (!file.type.startsWith('image/')) return;
+  if (!file.type.startsWith('image/')) {
+    showToast('Choisissez une image.');
+    return;
+  }
 
   setUploadLoading(true);
 
@@ -146,9 +149,21 @@ function handleFile(file) {
           fixed.onload = () => resizeAndShowCrop(fixed);
         }
       };
+      img.onerror = () => {
+        setUploadLoading(false);
+        showToast('Image illisible.');
+      };
       img.src = urlEvent.target.result;
     };
+    urlReader.onerror = () => {
+      setUploadLoading(false);
+      showToast('Lecture impossible.');
+    };
     urlReader.readAsDataURL(file);
+  };
+  abReader.onerror = () => {
+    setUploadLoading(false);
+    showToast('Lecture impossible.');
   };
   abReader.readAsArrayBuffer(file);
 }
@@ -213,6 +228,9 @@ function applyOrientation(img, orientation) {
 
 function setUploadLoading(isLoading) {
   document.getElementById('uploadSection').classList.toggle('is-loading', isLoading);
+  document.getElementById('processingOverlay').classList.toggle('hidden', !isLoading);
+  document.getElementById('selectBtn').disabled = isLoading;
+  document.getElementById('cameraBtn').disabled = isLoading;
 }
 
 function focusSection(id) {
@@ -595,7 +613,6 @@ async function whatsappShare() {
           text: currentEvent.shareText,
         });
         showToast('Partagé avec succès !');
-        resetToUpload();
       } catch (err) {
         if (err.name !== 'AbortError') downloadFallback(blob);
       }
@@ -625,7 +642,6 @@ async function facebookShare() {
           text: currentEvent.shareText,
         });
         showToast('Partagé avec succès !');
-        resetToUpload();
       } catch (err) {
         if (err.name !== 'AbortError') {
           downloadFallback(blob);
