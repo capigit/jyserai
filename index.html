@@ -99,12 +99,21 @@
 
       <!-- Section recadrage -->
       <section class="crop-section" id="cropSection" hidden>
-        <p class="crop-title">Recadrez votre photo</p>
+        <p class="crop-title">Ajustez votre photo</p>
         <div class="crop-wrapper" id="cropWrapper">
           <img id="cropImg" draggable="false" />
           <div class="crop-gesture-hint" id="cropGestureHint">
             <span id="cropGestureText">Glisse · Pince pour zoomer</span>
           </div>
+        </div>
+        <div class="crop-tools" aria-label="Outils de recadrage">
+          <button class="btn btn-icon" id="zoomOut" title="Dézoomer" aria-label="Dézoomer">
+            <span aria-hidden="true">−</span>
+          </button>
+          <button class="btn btn-icon" id="zoomIn" title="Zoomer" aria-label="Zoomer">
+            <span aria-hidden="true">+</span>
+          </button>
+          <button class="btn btn-secondary btn-reset" id="cropReset">Recentrer</button>
         </div>
         <div class="crop-actions">
           <button class="btn btn-icon" id="rotateCCW" title="Tourner à gauche" aria-label="Tourner à gauche">
@@ -122,12 +131,16 @@
             </svg>
           </button>
           <button class="btn btn-secondary" id="cropCancel">Annuler</button>
-          <button class="btn btn-primary" id="cropConfirm">✓ Confirmer</button>
+          <button class="btn btn-primary" id="cropConfirm">Créer l'affiche</button>
         </div>
       </section>
 
       <!-- Section résultat -->
       <section class="result-section" id="resultSection" hidden>
+        <div class="result-heading">
+          <h2>Votre affiche est prête !</h2>
+          <p>Partagez-la ou gardez-la dans votre galerie.</p>
+        </div>
         <div class="canvas-wrapper">
           <canvas id="canvas"></canvas>
           <div class="loading-overlay" id="loadingOverlay" role="status" aria-live="polite">
@@ -139,6 +152,19 @@
         <div class="actions" id="resultActions" hidden>
 
           <!-- Partage social — WhatsApp + Facebook -->
+          <div class="actions-row" id="nativeShareRow" hidden>
+            <button class="btn btn-primary btn-share-native" id="nativeShareBtn">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+                <circle cx="18" cy="5" r="3"/>
+                <circle cx="6" cy="12" r="3"/>
+                <circle cx="18" cy="19" r="3"/>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+              </svg>
+              Partager l'affiche
+            </button>
+          </div>
           <div class="actions-row">
             <button class="btn btn-whatsapp" id="whatsappBtn">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="19" height="19">

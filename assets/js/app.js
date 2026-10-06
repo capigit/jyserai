@@ -35,6 +35,7 @@ let cropState = {
   wrapperW: 0,
   wrapperH: 0,
 };
+let initialCropState = null;
 
 // ── Init ──────────────────────────────────────────────────
 window.addEventListener('load', () => {
@@ -44,6 +45,7 @@ window.addEventListener('load', () => {
 
   document.getElementById('changeBtn').addEventListener('click', resetToUpload);
   document.getElementById('downloadBtn').addEventListener('click', downloadResult);
+  document.getElementById('nativeShareBtn').addEventListener('click', nativeShare);
   document.getElementById('whatsappBtn').addEventListener('click', whatsappShare);
   document.getElementById('facebookBtn').addEventListener('click', facebookShare);
 
@@ -302,6 +304,7 @@ function showCropUI(dataURL, img) {
     wrapperW:  wW,
     wrapperH:  wH,
   };
+  initialCropState = { ...cropState };
 
   cropImg.src = dataURL;
   userImg = img;
@@ -313,9 +316,7 @@ function showCropUI(dataURL, img) {
   const hint = document.getElementById('cropGestureHint');
   const text = document.getElementById('cropGestureText');
   hint.classList.remove('fade-out');
-  text.textContent = navigator.maxTouchPoints > 1
-    ? 'Glisse · Pince pour zoomer'
-    : 'Glisse · Molette pour zoomer';
+  text.textContent = 'Glisse · Zoome si besoin';
   setTimeout(() => hint.classList.add('fade-out'), 2200);
 }
 
@@ -441,6 +442,28 @@ function onWheelZoom(e) {
   applyCropTransform();
 }
 
+function zoomCrop(factor) {
+  const minScale = Math.max(
+    cropState.wrapperW / cropState.naturalW,
+    cropState.wrapperH / cropState.naturalH
+  );
+  const newScale = Math.max(minScale, Math.min(cropState.scale * factor, 6));
+  const cx = cropState.wrapperW / 2;
+  const cy = cropState.wrapperH / 2;
+  const delta = newScale / cropState.scale;
+  cropState.x = cx - delta * (cx - cropState.x);
+  cropState.y = cy - delta * (cy - cropState.y);
+  cropState.scale = newScale;
+  clampCrop();
+  applyCropTransform();
+}
+
+function resetCropView() {
+  if (!initialCropState) return;
+  cropState = { ...initialCropState };
+  applyCropTransform();
+}
+
 function pinchDist(touches) {
   const dx = touches[0].clientX - touches[1].clientX;
   const dy = touches[0].clientY - touches[1].clientY;
@@ -467,10 +490,14 @@ function setupCropActions() {
     document.getElementById('cropSection').hidden = true;
     document.getElementById('uploadSection').hidden = false;
     userImg = null;
+    focusSection('uploadSection');
   });
 
   document.getElementById('rotateCCW').addEventListener('click', () => rotateCropImage(-90));
   document.getElementById('rotateCW').addEventListener('click',  () => rotateCropImage(90));
+  document.getElementById('zoomOut').addEventListener('click', () => zoomCrop(0.9));
+  document.getElementById('zoomIn').addEventListener('click', () => zoomCrop(1.12));
+  document.getElementById('cropReset').addEventListener('click', resetCropView);
 }
 
 function rotateCropImage(deg) {
@@ -581,6 +608,7 @@ function showResult() {
 function hideLoading() {
   document.getElementById('loadingOverlay').classList.add('hidden');
   document.getElementById('resultActions').hidden = false;
+  updateNativeShareAvailability();
 }
 
 function setResultBusy(isBusy, message = 'Préparation de l’image…') {
@@ -611,6 +639,48 @@ function canvasToOutputBlob(canvas) {
   return new Promise((resolve) => {
     canvas.toBlob((blob) => resolve(blob), OUTPUT_MIME);
   });
+}
+
+function updateNativeShareAvailability() {
+  const row = document.getElementById('nativeShareRow');
+  const canShare = typeof navigator.share === 'function' &&
+    typeof navigator.canShare === 'function' &&
+    window.File;
+  row.hidden = !canShare;
+}
+
+async function getOutputFile() {
+  const canvas = document.getElementById('canvas');
+  const blob = await canvasToOutputBlob(canvas);
+  if (!blob) return null;
+  return new File([blob], `${currentEvent.filename}.${OUTPUT_EXT}`, { type: OUTPUT_MIME });
+}
+
+async function nativeShare() {
+  setResultBusy(true, 'Préparation du partage…');
+  try {
+    const file = await getOutputFile();
+    if (!file) {
+      showToast('Préparation impossible.');
+      return;
+    }
+
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({
+        files: [file],
+        title: "J'y Serai - HIRDE Kankalabé 2026",
+        text: currentEvent.shareText,
+      });
+      showToast('Partagé avec succès !');
+    } else {
+      downloadFallback(file);
+      showToast('Image téléchargée.');
+    }
+  } catch (err) {
+    if (err.name !== 'AbortError') showToast('Partage impossible.');
+  } finally {
+    setResultBusy(false);
+  }
 }
 
 // ── WhatsApp ──────────────────────────────────────────────

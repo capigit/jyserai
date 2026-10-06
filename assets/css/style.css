@@ -393,6 +393,23 @@ main {
   animation: fade-up 0.4s ease both;
 }
 
+.result-heading {
+  text-align: center;
+}
+
+.result-heading h2 {
+  color: var(--text);
+  font-size: clamp(20px, 5.5vw, 26px);
+  font-weight: 900;
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+
+.result-heading p {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
 .canvas-wrapper {
   position: relative;
   width: 100%;
@@ -505,6 +522,12 @@ canvas {
 
 .btn-primary:hover { opacity: 0.9; }
 
+.btn-share-native {
+  border-radius: 999px;
+  font-weight: 800;
+  box-shadow: 0 6px 22px rgba(200, 146, 58, 0.28);
+}
+
 .btn-secondary {
   background: var(--surface2);
   color: var(--text);
@@ -615,6 +638,17 @@ footer p {
   width: 100%;
 }
 
+.crop-tools {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.btn-reset {
+  flex: 1;
+  min-height: 46px;
+}
+
 /* Boutons icône (rotation) dans la barre d'actions crop */
 .btn-icon {
   flex: 0 0 46px;
@@ -629,6 +663,12 @@ footer p {
   justify-content: center;
   touch-action: manipulation;
   transition: border-color 0.15s, color 0.15s, transform 0.1s;
+}
+
+.btn-icon span {
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1;
 }
 
 .btn-icon:hover  { border-color: var(--gold); color: var(--gold); }
@@ -719,7 +759,13 @@ footer p {
   .crop-section { gap: 14px; }
   .crop-wrapper { width: min(78vw, 315px); }
 
+  .crop-tools {
+    order: 2;
+    padding: 0 10px;
+  }
+
   .crop-actions {
+    order: 3;
     position: sticky;
     bottom: calc(10px + env(safe-area-inset-bottom));
     z-index: 10;
@@ -733,7 +779,15 @@ footer p {
 
   .result-section {
     max-width: 100%;
-    gap: 14px;
+    gap: 12px;
+  }
+
+  .result-heading h2 {
+    font-size: 20px;
+  }
+
+  .result-heading p {
+    font-size: 12.5px;
   }
 
   .canvas-wrapper {
