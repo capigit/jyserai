@@ -43,7 +43,7 @@
 
       <!-- Section upload -->
       <section class="upload-section" id="uploadSection" hidden>
-        <div class="processing-overlay hidden" id="processingOverlay">
+        <div class="processing-overlay hidden" id="processingOverlay" role="status" aria-live="polite">
           <div class="spinner"></div>
           <span>Préparation de la photo…</span>
         </div>
@@ -130,7 +130,7 @@
       <section class="result-section" id="resultSection" hidden>
         <div class="canvas-wrapper">
           <canvas id="canvas"></canvas>
-          <div class="loading-overlay" id="loadingOverlay">
+          <div class="loading-overlay" id="loadingOverlay" role="status" aria-live="polite">
             <div class="spinner"></div>
             <span id="loadingText">En attente d'une image…</span>
           </div>
@@ -181,7 +181,7 @@
     </main>
 
     <!-- Toast -->
-    <div class="toast" id="toast"></div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
     <footer>
       <img src="assets/images/posters/Logo.png" alt="AJDK" class="footer-logo" />

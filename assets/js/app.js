@@ -583,16 +583,34 @@ function hideLoading() {
   document.getElementById('resultActions').hidden = false;
 }
 
+function setResultBusy(isBusy, message = 'Préparation de l’image…') {
+  const overlay = document.getElementById('loadingOverlay');
+  const actions = document.getElementById('resultActions');
+  document.getElementById('loadingText').textContent = message;
+  overlay.classList.toggle('hidden', !isBusy);
+  actions.classList.toggle('is-busy', isBusy);
+  actions.querySelectorAll('button').forEach((button) => {
+    button.disabled = isBusy;
+  });
+}
+
 function resetToUpload() {
   userImg = null;
   document.getElementById('resultSection').hidden  = true;
   document.getElementById('resultActions').hidden  = true;
   document.getElementById('cropSection').hidden    = true;
   document.getElementById('uploadSection').hidden  = false;
+  setResultBusy(false);
   document.getElementById('loadingText').textContent = 'En attente d\'une image…';
   const canvas = document.getElementById('canvas');
   canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
   focusSection('uploadSection');
+}
+
+function canvasToOutputBlob(canvas) {
+  return new Promise((resolve) => {
+    canvas.toBlob((blob) => resolve(blob), OUTPUT_MIME);
+  });
 }
 
 // ── WhatsApp ──────────────────────────────────────────────
@@ -601,7 +619,14 @@ async function whatsappShare() {
   const isMobile = navigator.maxTouchPoints > 1 ||
     /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-  canvas.toBlob(async (blob) => {
+  setResultBusy(true, 'Préparation du partage…');
+  try {
+    const blob = await canvasToOutputBlob(canvas);
+    if (!blob) {
+      showToast('Préparation impossible.');
+      return;
+    }
+
     const file = new File([blob], `${currentEvent.filename}.${OUTPUT_EXT}`, { type: OUTPUT_MIME });
 
     if (isMobile && navigator.canShare && navigator.canShare({ files: [file] })) {
@@ -622,7 +647,9 @@ async function whatsappShare() {
       const text = encodeURIComponent(currentEvent.shareText);
       window.open(`https://wa.me/?text=${text}`, '_blank');
     }
-  }, OUTPUT_MIME);
+  } finally {
+    setResultBusy(false);
+  }
 }
 
 // ── Facebook ──────────────────────────────────────────────
@@ -631,7 +658,14 @@ async function facebookShare() {
   const isMobile = navigator.maxTouchPoints > 1 ||
     /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-  canvas.toBlob(async (blob) => {
+  setResultBusy(true, 'Préparation du partage…');
+  try {
+    const blob = await canvasToOutputBlob(canvas);
+    if (!blob) {
+      showToast('Préparation impossible.');
+      return;
+    }
+
     const file = new File([blob], `${currentEvent.filename}.${OUTPUT_EXT}`, { type: OUTPUT_MIME });
 
     if (isMobile && navigator.canShare && navigator.canShare({ files: [file] })) {
@@ -652,13 +686,26 @@ async function facebookShare() {
       downloadFallback(blob);
       window.open('https://www.facebook.com', '_blank');
     }
-  }, OUTPUT_MIME);
+  } finally {
+    setResultBusy(false);
+  }
 }
 
 // ── Téléchargement ────────────────────────────────────────
-function downloadResult() {
+async function downloadResult() {
   const canvas = document.getElementById('canvas');
-  canvas.toBlob((blob) => downloadFallback(blob), OUTPUT_MIME);
+  setResultBusy(true, 'Préparation du téléchargement…');
+  try {
+    const blob = await canvasToOutputBlob(canvas);
+    if (!blob) {
+      showToast('Téléchargement impossible.');
+      return;
+    }
+
+    downloadFallback(blob);
+  } finally {
+    setResultBusy(false);
+  }
 }
 
 function downloadFallback(blob) {
