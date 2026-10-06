@@ -6,8 +6,8 @@ const currentEvent = {
   photoArea: { x: 748, y: 208, w: 330, h: 504, radius: 48 },
   frameHot: { left: '64.88%', top: '14.41%', width: '31.02%', height: '39.09%', radius: '13%' },
   cropRatio: 330 / 504,
-  tagline:  "Prenez votre place<br><span>sur l'affiche !</span>",
-  desc:     "Montrez que vous serez présent au <strong class=\"artist\">HIRDE Kankalabé</strong>",
+  tagline:  "Prenez votre place !",
+  desc:     "<strong class=\"artist\">HIRDE KANKALABÉ</strong>",
   shareText: "Je serai au HIRDE Kankalabé le 28 novembre 2026 !",
   filename:  'jyserai-hirde-kankalabe-2026',
 };
@@ -215,6 +215,12 @@ function setUploadLoading(isLoading) {
   document.getElementById('uploadSection').classList.toggle('is-loading', isLoading);
 }
 
+function focusSection(id) {
+  requestAnimationFrame(() => {
+    document.getElementById(id).scrollIntoView({ block: 'start', behavior: 'smooth' });
+  });
+}
+
 function resizeAndShowCrop(img) {
   const MAX = 3000;
   const w = img.naturalWidth;
@@ -247,6 +253,7 @@ function showCropUI(dataURL, img) {
   document.getElementById('uploadSection').hidden = true;
   document.getElementById('resultSection').hidden = true;
   document.getElementById('cropSection').hidden   = false;
+  focusSection('cropSection');
 
   // Init state
   wrapper.style.aspectRatio = String(currentEvent.cropRatio || 1);
@@ -550,6 +557,7 @@ function showResult() {
   document.getElementById('cropSection').hidden      = true;
   document.getElementById('resultSection').hidden    = false;
   document.getElementById('loadingOverlay').classList.remove('hidden');
+  focusSection('resultSection');
 }
 
 function hideLoading() {
@@ -566,6 +574,7 @@ function resetToUpload() {
   document.getElementById('loadingText').textContent = 'En attente d\'une image…';
   const canvas = document.getElementById('canvas');
   canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+  focusSection('uploadSection');
 }
 
 // ── WhatsApp ──────────────────────────────────────────────

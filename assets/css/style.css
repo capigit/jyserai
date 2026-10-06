@@ -22,13 +22,20 @@
   --theme-transition: 0.45s ease;
 }
 
-html, body { min-height: 100%; }
+html {
+  min-height: 100%;
+  scroll-behavior: smooth;
+}
+
+body { min-height: 100%; }
 
 body {
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   background: var(--bg);
   color: var(--text);
   line-height: 1.5;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
   transition: background-color var(--theme-transition), color var(--theme-transition);
 }
 
@@ -42,7 +49,7 @@ body {
 header {
   background: linear-gradient(135deg, var(--green-deep) 0%, var(--green) 100%);
   border-bottom: 1px solid rgba(200, 146, 58, 0.35);
-  padding: 14px 20px;
+  padding: calc(14px + env(safe-area-inset-top)) 20px 14px;
   transition: background-color var(--theme-transition);
 }
 
@@ -82,7 +89,7 @@ header p {
 main {
   flex: 1;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   padding: 28px 20px 40px;
 }
@@ -90,8 +97,7 @@ main {
 /* ── État chargement upload ── */
 .upload-section.is-loading .poster-teaser,
 .upload-section.is-loading .btn-cta,
-.upload-section.is-loading .btn-camera,
-.upload-section.is-loading .hint-drag {
+.upload-section.is-loading .btn-camera {
   opacity: 0.45;
   pointer-events: none;
 }
@@ -154,7 +160,7 @@ main {
 /* ── Poster teaser ── */
 .poster-teaser {
   position: relative;
-  width: clamp(230px, 68vw, 310px);
+  width: clamp(240px, 72vw, 318px);
   cursor: pointer;
   animation: float 4s ease-in-out infinite;
   transition: transform 0.2s, filter 0.2s;
@@ -336,22 +342,25 @@ main {
 
 .btn-cta:active { transform: scale(0.97); }
 
-.hint-drag {
-  font-size: 12px;
-  color: var(--text-muted);
-  text-align: center;
-  opacity: 0.8;
+.btn-cta,
+.btn-camera,
+.btn {
+  -webkit-user-select: none;
+  user-select: none;
 }
 
-/* Masquer le hint drag sur écrans tactiles */
-@media (hover: none) and (pointer: coarse) {
-  .hint-drag { display: none; }
+.btn-cta:focus-visible,
+.btn-camera:focus-visible,
+.btn:focus-visible,
+.btn-icon:focus-visible {
+  outline: 3px solid rgba(224, 184, 104, 0.65);
+  outline-offset: 3px;
 }
 
 /* ── Result section ── */
 .result-section {
   width: 100%;
-  max-width: 480px;
+  max-width: 430px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -481,7 +490,7 @@ canvas {
 /* ── Footer ── */
 footer {
   text-align: center;
-  padding: 18px 16px;
+  padding: 18px 16px calc(18px + env(safe-area-inset-bottom));
   background: var(--green-deep);
   border-top: 1px solid rgba(200, 146, 58, 0.32);
   display: flex;
@@ -503,18 +512,10 @@ footer p {
   color: #d7c8b5;
 }
 
-/* ── Mention confidentialité ── */
-.privacy-note {
-  font-size: 11px;
-  color: var(--text-muted);
-  opacity: 0.7;
-  text-align: center;
-}
-
 /* ── Section recadrage ── */
 .crop-section {
   width: 100%;
-  max-width: 380px;
+  max-width: 420px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -530,7 +531,7 @@ footer p {
 }
 
 .crop-wrapper {
-  width: clamp(220px, 70vw, 300px);
+  width: clamp(240px, 76vw, 330px);
   aspect-ratio: 1 / 1;
   overflow: hidden;
   border: 2px solid var(--gold);
@@ -642,25 +643,128 @@ footer p {
 
 /* ── Responsive ── */
 @media (max-width: 768px) {
-  main { padding: 22px 16px 36px; }
+  main { padding: 20px 16px 34px; }
 }
 
 @media (max-width: 480px) {
-  .header-logo { width: 46px; height: 46px; }
-  header h1 { font-size: 18px; }
-  header { padding: 10px 16px; }
-  .tagline h2 { font-size: 20px; }
+  header {
+    padding: calc(9px + env(safe-area-inset-top)) 16px 9px;
+  }
+
+  .header-inner { gap: 10px; }
+  .header-logo { width: 42px; height: 42px; }
+  header h1 { font-size: 17px; }
+  header p { font-size: 11.5px; }
+
+  main { padding: 18px 16px 28px; }
+
+  .tagline h2 {
+    font-size: 21px;
+    margin-bottom: 8px;
+  }
+
   .tagline p { font-size: 12.5px; }
-  .poster-teaser { width: clamp(190px, 62vw, 260px); }
-  .btn-cta { font-size: 15px; min-height: 48px; padding: 12px 18px; max-width: 260px; }
-  .btn-camera { font-size: 13px; padding: 9px 16px; max-width: 260px; }
-  .upload-section { gap: 14px; }
+  .poster-teaser { width: min(78vw, 300px); }
+
+  .btn-cta,
+  .btn-camera {
+    max-width: 320px;
+    width: min(100%, 320px);
+  }
+
+  .btn-cta {
+    font-size: 16px;
+    min-height: 54px;
+    padding: 14px 18px;
+  }
+
+  .btn-camera {
+    font-size: 14px;
+    min-height: 50px;
+    padding: 11px 16px;
+  }
+
+  .upload-section { gap: 15px; }
+
+  .crop-section { gap: 14px; }
+  .crop-wrapper { width: min(78vw, 315px); }
+
+  .crop-actions {
+    position: sticky;
+    bottom: calc(10px + env(safe-area-inset-bottom));
+    z-index: 10;
+    padding: 10px;
+    border: 1px solid rgba(216, 195, 163, 0.75);
+    border-radius: 14px;
+    background: rgba(248, 244, 241, 0.92);
+    box-shadow: 0 12px 32px rgba(0, 35, 33, 0.16);
+    backdrop-filter: blur(10px);
+  }
+
+  .result-section {
+    max-width: 100%;
+    gap: 14px;
+  }
+
+  .canvas-wrapper {
+    width: min(100%, 390px);
+    border-radius: 12px;
+  }
+
+  .actions {
+    position: sticky;
+    bottom: calc(10px + env(safe-area-inset-bottom));
+    z-index: 10;
+    gap: 8px;
+    padding: 10px;
+    border: 1px solid rgba(216, 195, 163, 0.75);
+    border-radius: 16px;
+    background: rgba(248, 244, 241, 0.94);
+    box-shadow: 0 12px 32px rgba(0, 35, 33, 0.16);
+    backdrop-filter: blur(10px);
+  }
+
+  .actions-row { gap: 8px; }
+
+  .btn {
+    min-height: 52px;
+    padding: 12px 10px;
+    font-size: 14px;
+    border-radius: 12px;
+  }
+
+  .btn-whatsapp,
+  .btn-facebook {
+    border-radius: 999px;
+  }
+
+  .toast {
+    bottom: calc(18px + env(safe-area-inset-bottom));
+    max-width: calc(100vw - 32px);
+    white-space: normal;
+    text-align: center;
+  }
 }
 
 @media (max-width: 360px) {
-  .tagline h2 { font-size: 18px; }
-  .poster-teaser { width: clamp(170px, 58vw, 220px); }
+  .tagline h2 { font-size: 19px; }
+  .poster-teaser { width: min(74vw, 250px); }
   .upload-section { gap: 12px; }
-  .btn-cta { font-size: 14px; min-height: 44px; max-width: 220px; }
-  .btn-camera { max-width: 220px; }
+  .btn-cta { font-size: 15px; min-height: 50px; }
+  .btn-camera { min-height: 48px; }
+  .crop-wrapper { width: min(76vw, 280px); }
+  .btn { font-size: 13px; }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .poster-teaser {
+    animation: none;
+  }
+
+  .poster-teaser:hover,
+  .btn-cta:hover,
+  .btn-whatsapp:hover,
+  .btn-facebook:hover {
+    transform: none;
+  }
 }
