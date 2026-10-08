@@ -3,7 +3,7 @@ const currentEvent = {
   id:         'hirde',
   label:      'HIRDE Kankalabé',
   poster: 'assets/images/posters/hirde.png',
-  photoArea: { x: 748, y: 208, w: 330, h: 504, radius: 48 },
+  photoArea: { x: 744, y: 208, w: 330, h: 504, radius: 64 },
   frameHot: { left: '64.88%', top: '14.41%', width: '31.02%', height: '39.09%', radius: '13%' },
   cropRatio: 330 / 504,
   tagline:  "Prenez votre place !",
@@ -281,7 +281,10 @@ function showCropUI(dataURL, img) {
 
   // Init state
   wrapper.style.aspectRatio = String(currentEvent.cropRatio || 1);
-  wrapper.style.borderRadius = currentEvent.photoArea ? '12%' : '50%';
+  const area = currentEvent.photoArea;
+  wrapper.style.borderRadius = area
+    ? `${area.radius / area.w * 100}% / ${area.radius / area.h * 100}%`
+    : '50%';
   const wW = wrapper.clientWidth;
   const wH = wrapper.clientHeight;
   const imgRatio  = img.naturalWidth / img.naturalHeight;
@@ -558,6 +561,15 @@ function renderComposite() {
     clipPosterPhotoArea(ctx, area);
     ctx.clip();
     drawCoverCropped(ctx, userImg, area.x, area.y, area.w, area.h);
+    ctx.restore();
+
+    ctx.save();
+    ctx.strokeStyle = '#fff7e8';
+    ctx.lineWidth = 4;
+    const inset = ctx.lineWidth / 2;
+    roundedRectPath(ctx, area.x + inset, area.y + inset,
+      area.w - 2 * inset, area.h - 2 * inset, area.radius - inset);
+    ctx.stroke();
     ctx.restore();
 
     hideLoading();
