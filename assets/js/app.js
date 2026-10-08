@@ -237,7 +237,11 @@ function setUploadLoading(isLoading) {
 
 function focusSection(id) {
   requestAnimationFrame(() => {
-    document.getElementById(id).scrollIntoView({ block: 'start', behavior: 'smooth' });
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    document.getElementById(id).scrollIntoView({
+      block: 'start',
+      behavior: reduceMotion ? 'auto' : 'smooth',
+    });
   });
 }
 
@@ -311,6 +315,9 @@ function showCropUI(dataURL, img) {
 
   applyCropTransform();
   setupCropDrag(wrapper);
+  const visibleCropImg = document.getElementById('cropImg');
+  visibleCropImg.classList.remove('photo-enter');
+  requestAnimationFrame(() => visibleCropImg.classList.add('photo-enter'));
 
   // Overlay d'indication gestuelle, adapté au type d'entrée
   const hint = document.getElementById('cropGestureHint');
@@ -483,7 +490,7 @@ function setupCropActions() {
   document.getElementById('cropConfirm').addEventListener('click', () => {
     document.getElementById('cropSection').hidden = true;
     showResult();
-    renderComposite();
+    requestAnimationFrame(() => requestAnimationFrame(renderComposite));
   });
 
   document.getElementById('cropCancel').addEventListener('click', () => {
@@ -597,6 +604,9 @@ function drawCoverCropped(ctx, img, dx, dy, dw, dh) {
 
 // ── Navigation ────────────────────────────────────────────
 function showResult() {
+  const result = document.getElementById('resultSection');
+  result.classList.remove('is-ready');
+  result.classList.add('is-generating');
   document.getElementById('loadingText').textContent = 'Génération en cours…';
   document.getElementById('uploadSection').hidden    = true;
   document.getElementById('cropSection').hidden      = true;
@@ -606,6 +616,9 @@ function showResult() {
 }
 
 function hideLoading() {
+  const result = document.getElementById('resultSection');
+  result.classList.remove('is-generating');
+  result.classList.add('is-ready');
   document.getElementById('loadingOverlay').classList.add('hidden');
   document.getElementById('resultActions').hidden = false;
   updateNativeShareAvailability();
@@ -633,6 +646,13 @@ function resetToUpload() {
   const canvas = document.getElementById('canvas');
   canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
   focusSection('uploadSection');
+}
+
+function flashAction(id) {
+  const button = document.getElementById(id);
+  button.classList.remove('is-confirmed');
+  void button.offsetWidth;
+  button.classList.add('is-confirmed');
 }
 
 function canvasToOutputBlob(canvas) {
@@ -671,6 +691,7 @@ async function nativeShare() {
         title: "J'y Serai - HIRDE Kankalabé 2026",
         text: currentEvent.shareText,
       });
+      flashAction('nativeShareBtn');
       showToast('Partagé avec succès !');
     } else {
       downloadFallback(file);
@@ -707,6 +728,7 @@ async function whatsappShare() {
           title: "J'y Serai - HIRDE Kankalabé 2026",
           text: currentEvent.shareText,
         });
+        flashAction('whatsappBtn');
         showToast('Partagé avec succès !');
       } catch (err) {
         if (err.name !== 'AbortError') downloadFallback(blob);
@@ -745,6 +767,7 @@ async function facebookShare() {
           title: "J'y Serai - HIRDE Kankalabé 2026",
           text: currentEvent.shareText,
         });
+        flashAction('facebookBtn');
         showToast('Partagé avec succès !');
       } catch (err) {
         if (err.name !== 'AbortError') {
@@ -773,6 +796,7 @@ async function downloadResult() {
     }
 
     downloadFallback(blob);
+    flashAction('downloadBtn');
   } finally {
     setResultBusy(false);
   }

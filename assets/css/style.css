@@ -393,6 +393,26 @@ main {
   animation: fade-up 0.4s ease both;
 }
 
+.result-section.is-generating .result-heading { opacity: 0; }
+
+.result-section.is-ready .result-heading {
+  animation: result-heading-in 0.32s ease-out both;
+}
+
+.result-section.is-ready .canvas-wrapper {
+  animation: result-poster-in 0.38s ease-out both;
+}
+
+@keyframes result-heading-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes result-poster-in {
+  from { opacity: 0.65; transform: translateY(10px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
 .result-heading {
   text-align: center;
 }
@@ -413,6 +433,7 @@ main {
 .canvas-wrapper {
   position: relative;
   width: 100%;
+  aspect-ratio: 1122 / 1402;
   border-radius: var(--radius);
   overflow: hidden;
   box-shadow: 0 12px 48px rgba(0,35,33,0.24), 0 0 0 1px rgba(200,146,58,0.24);
@@ -421,24 +442,41 @@ main {
 canvas {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
   max-width: 100%;
 }
 
 .loading-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.72);
+  background: #073226;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 14px;
   font-size: 15px;
-  color: var(--text-muted);
+  color: #fffaf4;
+  overflow: hidden;
 }
 
 .loading-overlay.hidden { display: none; }
+
+.loading-overlay::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 35%;
+  height: 3px;
+  background: var(--gold-light);
+  animation: loading-sweep 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes loading-sweep {
+  from { transform: translateX(0); }
+  to { transform: translateX(186%); }
+}
 
 .spinner {
   width: 38px;
@@ -483,6 +521,12 @@ canvas {
 }
 
 .btn:active { transform: scale(0.97); }
+
+.btn.is-confirmed { animation: action-confirmed 0.28s ease-out; }
+
+@keyframes action-confirmed {
+  50% { transform: scale(1.035); }
+}
 
 .btn[disabled] {
   cursor: wait;
@@ -605,6 +649,13 @@ footer p {
   -webkit-user-drag: none;
   pointer-events: none;
   transform-origin: 0 0;
+}
+
+#cropImg.photo-enter { animation: crop-photo-in 0.3s ease-out both; }
+
+@keyframes crop-photo-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .crop-gesture-hint {
