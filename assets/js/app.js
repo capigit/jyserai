@@ -662,11 +662,11 @@ function canvasToOutputBlob(canvas) {
 }
 
 function updateNativeShareAvailability() {
-  const row = document.getElementById('nativeShareRow');
+  const button = document.getElementById('nativeShareBtn');
   const canShare = typeof navigator.share === 'function' &&
     typeof navigator.canShare === 'function' &&
     window.File;
-  row.hidden = !canShare;
+  button.hidden = !canShare;
 }
 
 async function getOutputFile() {

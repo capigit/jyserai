@@ -115,6 +115,7 @@ main {
 
 /* ── Upload section ── */
 .upload-section {
+  --poster-width: clamp(240px, 72vw, 318px);
   position: relative;
   width: 100%;
   max-width: 380px;
@@ -185,7 +186,8 @@ main {
 /* ── Poster teaser ── */
 .poster-teaser {
   position: relative;
-  width: clamp(240px, 72vw, 318px);
+  width: var(--poster-width);
+  max-width: 100%;
   cursor: pointer;
   animation: float 4s ease-in-out infinite;
   transition: transform 0.2s, filter 0.2s;
@@ -294,6 +296,20 @@ main {
   text-shadow: 0 1px 4px rgba(0,0,0,0.9);
 }
 
+.upload-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  width: calc(var(--poster-width) - 24px);
+  max-width: calc(100% - 24px);
+}
+
+.upload-actions .btn-cta,
+.upload-actions .btn-camera {
+  min-width: 0;
+  max-width: none;
+}
+
 /* ── Bouton selfie ── */
 .btn-camera {
   display: flex;
@@ -304,7 +320,7 @@ main {
   border: 1.5px solid var(--border);
   color: var(--text-muted);
   border-radius: 50px;
-  padding: 10px 22px;
+  padding: 8px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -312,6 +328,7 @@ main {
   transition: border-color 0.15s, color 0.15s, border-color var(--theme-transition);
   width: 100%;
   max-width: 320px;
+  min-height: 46px;
 }
 
 .btn-camera:hover {
@@ -324,23 +341,30 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
   width: 100%;
   max-width: 320px;
-  padding: 16px 28px;
-  font-size: 17px;
+  padding: 8px 10px;
+  font-size: 16px;
   font-weight: 800;
   background: var(--gold);
   color: var(--green-deep);
   border: none;
   border-radius: 50px;
   cursor: pointer;
-  min-height: 56px;
+  min-height: 46px;
   touch-action: manipulation;
   position: relative;
   overflow: hidden;
   box-shadow: 0 6px 28px rgba(200, 146, 58, 0.35), 0 2px 8px rgba(0,35,33,0.18);
   transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.btn-cta svg,
+.btn-camera svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
 }
 
 /* Effet shimmer */
@@ -501,6 +525,18 @@ canvas {
   display: flex;
   gap: 10px;
   width: 100%;
+}
+
+.result-actions-row .btn {
+  min-width: 0;
+  min-height: 54px;
+  padding: 0;
+}
+
+.result-actions-row .btn svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
 }
 
 .btn {
@@ -785,25 +821,7 @@ footer p {
   }
 
   .tagline p { font-size: 12.5px; }
-  .poster-teaser { width: min(78vw, 300px); }
-
-  .btn-cta,
-  .btn-camera {
-    max-width: 320px;
-    width: min(100%, 320px);
-  }
-
-  .btn-cta {
-    font-size: 16px;
-    min-height: 54px;
-    padding: 14px 18px;
-  }
-
-  .btn-camera {
-    font-size: 14px;
-    min-height: 50px;
-    padding: 11px 16px;
-  }
+  .upload-section { --poster-width: min(78vw, 300px); }
 
   .upload-section { gap: 15px; }
 
@@ -883,10 +901,9 @@ footer p {
 
 @media (max-width: 360px) {
   .tagline h2 { font-size: 19px; }
-  .poster-teaser { width: min(74vw, 250px); }
+  .upload-section { --poster-width: min(74vw, 250px); }
   .upload-section { gap: 12px; }
-  .btn-cta { font-size: 15px; min-height: 50px; }
-  .btn-camera { min-height: 48px; }
+  .btn-cta { font-size: 15px; }
   .crop-wrapper { width: min(76vw, 280px); }
   .btn { font-size: 13px; }
 }
