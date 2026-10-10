@@ -237,21 +237,14 @@ main {
   font-size: 13px;
   color: var(--text-muted);
   transition: opacity 0.3s ease;
-  /* maintient le ratio carre de la nouvelle affiche */
-  aspect-ratio: 1 / 1;
 }
 
 .poster-loader.hidden { opacity: 0; pointer-events: none; }
 
-/* Cadre dore anime sur le cercle vide de l'affiche */
+/* Zone photo sur l'affiche */
 .frame-hot {
   position: absolute;
-  left: 5.82%;
-  top: 33.02%;
-  width: 59.66%;
-  height: 59.66%;
   border: 2px solid var(--gold);
-  border-radius: 50%;
   background: rgba(200, 146, 58, 0.08);
   display: flex;
   align-items: center;

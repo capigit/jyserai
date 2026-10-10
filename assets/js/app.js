@@ -1,7 +1,5 @@
 // ── Config affiche ───────────────────────────────────────
 const currentEvent = {
-  id:         'hirde',
-  label:      'HIRDE Kankalabé',
   poster: 'assets/images/posters/hirde.png',
   photoArea: { x: 744, y: 208, w: 330, h: 504, radius: 64 },
   frameHot: { left: '64.88%', top: '14.41%', width: '31.02%', height: '39.09%', radius: '13%' },
@@ -317,10 +315,8 @@ function showCropUI(dataURL, img) {
   userImg = img;
 
   applyCropTransform();
-  setupCropDrag(wrapper);
-  const visibleCropImg = document.getElementById('cropImg');
-  visibleCropImg.classList.remove('photo-enter');
-  requestAnimationFrame(() => visibleCropImg.classList.add('photo-enter'));
+  cropImg.classList.remove('photo-enter');
+  requestAnimationFrame(() => cropImg.classList.add('photo-enter'));
 
   // Overlay d'indication gestuelle, adapté au type d'entrée
   const hint = document.getElementById('cropGestureHint');
@@ -337,23 +333,18 @@ function applyCropTransform() {
 }
 
 function setupCropDrag(wrapper) {
-  // Remove previous listeners by cloning
-  const fresh = wrapper.cloneNode(true);
-  wrapper.parentNode.replaceChild(fresh, wrapper);
-  const el = document.getElementById('cropWrapper');
-
   // Mouse
-  el.addEventListener('mousedown', onDragStart);
+  wrapper.addEventListener('mousedown', onDragStart);
   window.addEventListener('mousemove', onDragMove);
   window.addEventListener('mouseup', onDragEnd);
 
   // Wheel zoom (desktop)
-  el.addEventListener('wheel', onWheelZoom, { passive: false });
+  wrapper.addEventListener('wheel', onWheelZoom, { passive: false });
 
   // Touch
-  el.addEventListener('touchstart', onTouchStart, { passive: false });
-  el.addEventListener('touchmove',  onTouchMove,  { passive: false });
-  el.addEventListener('touchend',   onTouchEnd);
+  wrapper.addEventListener('touchstart', onTouchStart, { passive: false });
+  wrapper.addEventListener('touchmove',  onTouchMove,  { passive: false });
+  wrapper.addEventListener('touchend',   onTouchEnd);
 }
 
 function onDragStart(e) {
@@ -490,6 +481,8 @@ function clampCrop() {
 }
 
 function setupCropActions() {
+  setupCropDrag(document.getElementById('cropWrapper'));
+
   document.getElementById('cropConfirm').addEventListener('click', () => {
     document.getElementById('cropSection').hidden = true;
     showResult();
@@ -601,17 +594,7 @@ function roundedRectPath(ctx, x, y, w, h, r) {
 // Draw with crop offset from cropState
 function drawCoverCropped(ctx, img, dx, dy, dw, dh) {
   const { sx, sy, sw, sh } = getCropSourceRect();
-  // Map wrapper crop rect to the photo area dimensions
-  const wrapperRatio = cropState.wrapperW / cropState.wrapperH;
-  const areaRatio    = dw / dh;
-
-  if (Math.abs(wrapperRatio - areaRatio) < 0.01) {
-    // Same ratio - direct mapping
-    ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
-  } else {
-    // Fall back to cover if ratios diverge (shouldn't happen with correct wrapper aspect-ratio)
-    ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
-  }
+  ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
 }
 
 // ── Navigation ────────────────────────────────────────────
@@ -641,7 +624,6 @@ function setResultBusy(isBusy, message = 'Préparation de l’image…') {
   const actions = document.getElementById('resultActions');
   document.getElementById('loadingText').textContent = message;
   overlay.classList.toggle('hidden', !isBusy);
-  actions.classList.toggle('is-busy', isBusy);
   actions.querySelectorAll('button').forEach((button) => {
     button.disabled = isBusy;
   });
